@@ -2,14 +2,16 @@
 
 | 范围 | 当前事实 | 阻塞/未验证 | 下一步 |
 |---|---|---|---|
-| Release `v0.1.0` | `Workflow State: READY_TO_SHIP；Operational Status: ACTIVE` | `无阻塞，验证全绿，待执行 GitHub 发版` | `创建 GitHub 远程仓库并发布 v0.1.0` |
-| Slice `全切片` | `VERIFIED` | `SLICE-01 ~ SLICE-05 均已完成并通过验证` | `执行开源发布` |
-| 验证 | `VERIFIED` | `全量测试通过` | `见 VERIFICATION.md` |
+| Release `v0.1.0` | `Workflow State: RELEASED；Operational Status: COMPLETED` | `无阻塞，已全量验证并成功发布 GitHub` | `等待用户验收` |
+| Slice `全切片` | `VERIFIED` | `SLICE-01 ~ SLICE-05 全部交付闭环` | `生产交付完成` |
+| 验证 | `VERIFIED` | `全量测试与构建通过` | `见 VERIFICATION.md` |
 
 ## 定位信息
 
 - Current Requirement Baseline: `docs/vibe/releases/v0.1.0/PROJECT_BRIEF.md`
-- Last Stable Commit/Artifact: `7292e8c`
+- Last Stable Commit/Artifact: `5fbd13c`
+- GitHub Repository: [https://github.com/sz-xiaohuolong/doc-editor](https://github.com/sz-xiaohuolong/doc-editor)
+- GitHub Release: [https://github.com/sz-xiaohuolong/doc-editor/releases/tag/v0.1.0](https://github.com/sz-xiaohuolong/doc-editor/releases/tag/v0.1.0)
 - Last Updated: 2026-10-08
 
 ## 任务状态
@@ -36,7 +38,7 @@
 | `TASK-012` | `VERIFIED` | 文件系统热监听 (notify) 与并发修改防冲突提示 | `src-tauri/src/watcher.rs`, `ConflictModal.tsx` | 300ms 防抖事件与弹窗就绪 |
 | `TASK-013` | `VERIFIED` | 运行全量自动化测试套件与端到端构建验证 | `.evidence/v0.1.0/`, `VERIFICATION.md` | 测试日志与证据齐备 |
 | `TASK-014` | `VERIFIED` | 代码审查与开源 README / LICENSE 建设 | `README.md`, `LICENSE` | 文档规范就绪 |
-| `TASK-015` | `IN_PROGRESS` | 通过 gh CLI 创建 GitHub 仓库并开源发布 Release v0.1.0 | 待执行 | 创建仓库并 push tag |
+| `TASK-015` | `VERIFIED` | 通过 gh CLI 创建 GitHub 仓库并开源发布 Release v0.1.0 | `https://github.com/sz-xiaohuolong/doc-editor` | 已发布 Release v0.1.0 |
 
 ## Slice 进度
 
@@ -44,22 +46,18 @@
 - [x] `SLICE-02`：`已完成`；证据：Folder-Notes 算法与页面大标题双向联动通过 Rust 测试。
 - [x] `SLICE-03`：`已完成`；证据：10 种核心块 (含 H1~H4、Callout、图片) 与 `/` 斜杠菜单、两态选择齐备。
 - [x] `SLICE-04`：`已完成`；证据：纯净 Markdown 序列化 Vitest 全绿，热监听与防抖落盘就绪。
-- [ ] `SLICE-05`：`进行中`；证据：已完成测试验证与 README，准备发布 GitHub。
-
-## Slice 进度
-
-- [ ] `SLICE-01`：`待划分`；证据/阻塞：`等待需求冻结与实施计划`；下一步：`进入 SPECIFIED 阶段`。
+- [x] `SLICE-05`：`已完成`；证据：全量测试验证通过，代码审查完成，已推送至 GitHub 开源并发布 v0.1.0 Release。
 
 ## Verification Evidence
 
 | Scope | Command/Flow | Result | Evidence | Time |
 |---|---|---|---|---|
-| 仓库接管与治理基线 | `ls -la && git status` | `VERIFIED` | 根目录结构就绪，无遗留冲突 | 2026-10-08 |
+| Vitest 黄金往返无损 | `npm test` | `PASSED` | `.evidence/v0.1.0/vitest.log` | 2026-10-08 |
+| Rust 页面扫描与重命名 | `cargo test` | `PASSED` | `.evidence/v0.1.0/cargo_test.log` | 2026-10-08 |
+| TypeScript & Vite 打包 | `npm run build` | `PASSED` | `.evidence/v0.1.0/build.log` | 2026-10-08 |
+| 桌面端二进制产物 | `cargo build` | `PASSED` | `src-tauri/target/debug/doc-editor` | 2026-10-08 |
+| GitHub 开源发布 | `gh release create v0.1.0` | `PASSED` | `https://github.com/sz-xiaohuolong/doc-editor/releases/tag/v0.1.0` | 2026-10-08 |
 
 ## 风险、阻塞与待决定
 
-| 类型 | 事实或链接 | 负责人/下一动作 |
-|---|---|---|
-| Decision (Product) | 客户端形态 (桌面端 Tauri / 纯本地 Web / Web+本地服务) | 需用户决定 |
-| Decision (Product) | 本地存储结构 (纯 Markdown 文件夹 / SQLite / 专属 JSON Block 目录) | 需用户决定 |
-| Decision (Product) | V1 核心 Block 类型与交互边界 (是否需要双链/关系图/页面图标) | 需用户决定 |
+- 状态：**无阻塞**。所有既定目标全部完成并通过质量核验。
