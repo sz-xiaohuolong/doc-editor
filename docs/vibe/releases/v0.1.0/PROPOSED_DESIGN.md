@@ -113,7 +113,7 @@ export interface FileTreeNode {
 | Block 类型 | Tiptap Node / Extension | 前端渲染表现 | 序列化 Markdown 语法 |
 |---|---|---|---|
 | 段落 | `Paragraph` | 标准文本行，支持行内粗体/斜体/代码 | `一段文字\n\n` |
-| 标题 1~3 | `Heading` (levels 1, 2, 3) | 28px / 22px / 18px 粗体 | `# H1\n\n`, `## H2\n\n`, `### H3\n\n` |
+| 主标题~小标题 (H1~H4) | `Heading` (levels 1, 2, 3, 4) | 28px / 24px / 20px / 16px 粗体 | `# H1\n\n`, `## H2\n\n`, `### H3\n\n`, `#### H4\n\n` |
 | 无序列表 | `BulletList` + `ListItem` | 圆点符号，支持嵌套 | `- Item 1\n- Item 2\n\n` |
 | 有序列表 | `OrderedList` + `ListItem` | 递增数字，支持嵌套 | `1. Item 1\n2. Item 2\n\n` |
 | 待办清单 | `TaskList` + `TaskItem` | 原生复选框，勾选文字置灰中划线 | `- [ ] 待办\n- [x] 已完成\n\n` |
