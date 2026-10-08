@@ -6,6 +6,8 @@ node_modules/
 dist/
 build/
 out/
+target/
+src-tauri/target/
 
 # Evidence & Logs (vibe-workflow)
 /.evidence/

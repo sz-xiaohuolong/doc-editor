@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Tiptap editor typography & styles */
+.tiptap {
+  outline: none !important;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Callout styling matching wolai */
+.wolai-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  background-color: #f7f6f3;
+  border-left: 3px solid #dfdeda;
+  margin: 12px 0;
+}
+
+.wolai-callout.note {
+  background-color: #f0f7ff;
+  border-left-color: #3b82f6;
+}
+
+.wolai-callout.warning {
+  background-color: #fffbeb;
+  border-left-color: #f59e0b;
+}
+
+/* Task list checkbox styling */
+ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 4px 0;
+}
+
+ul[data-type="taskList"] li > label {
+  user-select: none;
+  margin-top: 3px;
+}
+
+ul[data-type="taskList"] li > div {
+  flex: 1 1 auto;
+}
+
+/* Selected block highlight (Esc mode) */
+.ProseMirror-selectednode {
+  outline: 2px solid #93c5fd !important;
+  border-radius: 4px;
+  background-color: rgba(239, 246, 255, 0.5) !important;
+}

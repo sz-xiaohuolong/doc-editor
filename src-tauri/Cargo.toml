@@ -1,0 +1,29 @@
+[package]
+name = "doc-editor"
+version = "0.1.0"
+description = "A wolai-like local block-based Markdown document editor"
+authors = ["sz-xiaohuolong"]
+license = "MIT"
+repository = "https://github.com/sz-xiaohuolong/doc-editor"
+edition = "2021"
+
+[lib]
+name = "doc_editor_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+tauri = { version = "2.2", features = [] }
+tauri-plugin-dialog = "2.2"
+tauri-plugin-fs = "2.2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+notify = "6.1"
+dirs = "5.0"
+chrono = "0.4"
+uuid = { version = "1.10", features = ["v4"] }
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
