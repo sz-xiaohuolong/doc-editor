@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build artifacts
+dist/
+build/
+out/
+
+# Evidence & Logs (vibe-workflow)
+/.evidence/
+
+# Environment and OS
+.DS_Store
+*.local
+.env
