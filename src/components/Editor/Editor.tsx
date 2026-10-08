@@ -16,6 +16,7 @@ import {
   SlashMenuItem,
   filterSlashMenuItems,
 } from "./SlashMenu";
+import { BlockHandle } from "./BlockHandle";
 import { saveImageAsset } from "../../services/tauriApi";
 
 interface EditorProps {
@@ -379,8 +380,9 @@ export const Editor: React.FC<EditorProps> = ({
   return (
     <div
       ref={editorContainerRef}
-      className="relative w-full max-w-3xl mx-auto px-6 py-4"
+      className="relative w-full max-w-3xl mx-auto pl-14 pr-8 py-6"
     >
+      <BlockHandle editor={editor} containerRef={editorContainerRef} />
       <EditorContent editor={editor} />
       {editor && (
         <SlashMenu

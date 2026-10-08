@@ -57,7 +57,8 @@
 | TypeScript & Vite 打包 | `npm run build` | `PASSED` | `.evidence/v0.1.0/build.log` | 2026-10-08 |
 | 桌面端二进制产物 | `cargo build` | `PASSED` | `src-tauri/target/debug/doc-editor` | 2026-10-08 |
 | GitHub 开源发布 | `gh release create v0.1.0` | `PASSED` | `https://github.com/sz-xiaohuolong/doc-editor/releases/tag/v0.1.0` | 2026-10-08 |
+| Wolai 六点手柄与全排版复刻 | `node scripts/verify-wolai-reproduction.js` | `PASSED` | `.evidence/v0.1.0/wolai_block_handle_hover.png`, `wolai_block_menu_open.png` | 2026-10-08 |
 
 ## 风险、阻塞与待决定
 
-- 状态：**无阻塞**。所有既定目标全部完成并通过质量核验。
+- 状态：**无阻塞**。用户反馈的问题已 1:1 逆向复刻完成，六点手柄 ⠿ 与全套 Wolai 视觉层级全量落地并截图验证。
