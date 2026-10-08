@@ -2,8 +2,8 @@
 
 | 范围 | 当前事实 | 阻塞/未验证 | 下一步 |
 |---|---|---|---|
-| Release `v0.1.0` | `Workflow State: WAITING_REQUIREMENT_FREEZE；Operational Status: WAITING_HUMAN` | `核心产品边界待确认 (Open Questions)` | `通过需求澄清对质问卷冻结需求` |
-| Slice `未划分` | `NOT_STARTED` | `等待需求冻结与规格设计` | `完成需求对质` |
+| Release `v0.1.0` | `Workflow State: WAITING_REQUIREMENT_FREEZE；Operational Status: WAITING_HUMAN` | `等待用户最终签字确认冻结范围` | `用户批准后推进至 REQUIREMENTS_FROZEN -> SPECIFIED` |
+| Slice `未划分` | `NOT_STARTED` | `等待需求冻结与规格设计` | `完成需求冻结` |
 | 验证 | `未运行` | `工程尚未开工` | `待 SPEC 建立可测 AC` |
 
 ## 定位信息
