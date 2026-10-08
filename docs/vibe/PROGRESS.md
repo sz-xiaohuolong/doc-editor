@@ -9,7 +9,7 @@
 ## 定位信息
 
 - Current Requirement Baseline: `docs/vibe/releases/v0.1.0/PROJECT_BRIEF.md`
-- Last Stable Commit/Artifact: `1fae37d`
+- Last Stable Commit/Artifact: `5320c52` (docs(vibe): freeze v0.1.0 requirements via grill-me interview)
 - Last Updated: 2026-10-08
 
 ## 任务状态
