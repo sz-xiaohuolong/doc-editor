@@ -9,7 +9,7 @@
 ## 定位信息
 
 - Current Requirement Baseline: `docs/vibe/releases/v0.1.0/PROJECT_BRIEF.md (草案)`
-- Last Stable Commit/Artifact: `git: 初始化脚手架与文档地图`
+- Last Stable Commit/Artifact: `4838644` (chore: initialize vibe-workflow project governance and baseline)
 - Last Updated: 2026-10-08
 
 ## 任务状态
