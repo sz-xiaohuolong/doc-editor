@@ -35,7 +35,7 @@
 | `TASK-009` | `VERIFIED` | 斜杠浮动命令菜单 (`/`) 与拼音缩写过滤 | `SlashMenu.tsx` (/wb, /dblb, /h1~/h4 等) | 交互测试通过 |
 | `TASK-010` | `VERIFIED` | 100% 纯净 Markdown 双向无损序列化与黄金测试 | `tests/markdown-roundtrip.test.ts` | Vitest 4/4 全绿 |
 | `TASK-011` | `VERIFIED` | 1000ms 防抖自动落盘与 Cmd+S 即时保存 | `src/App.tsx`, `StatusBar.tsx` | 自动保存状态反馈正常 |
-| `TASK-012` | `VERIFIED` | 文件系统热监听 (notify) 与并发修改防冲突提示 | `src-tauri/src/watcher.rs`, `ConflictModal.tsx` | 300ms 防抖事件与弹窗就绪 |
+| `TASK-012` | `VERIFIED` | 文件系统热监听 (notify) 与平滑外部同步 (已移除阻断性冲突弹窗) | `src-tauri/src/watcher.rs`, `src/App.tsx` | 300ms 防抖事件与静默同步就绪 |
 | `TASK-013` | `VERIFIED` | 运行全量自动化测试套件与端到端构建验证 | `.evidence/v0.1.0/`, `VERIFICATION.md` | 测试日志与证据齐备 |
 | `TASK-014` | `VERIFIED` | 代码审查与开源 README / LICENSE 建设 | `README.md`, `LICENSE` | 文档规范就绪 |
 | `TASK-015` | `VERIFIED` | 通过 gh CLI 创建 GitHub 仓库并开源发布 Release v0.1.0 | `https://github.com/sz-xiaohuolong/doc-editor` | 已发布 Release v0.1.0 |

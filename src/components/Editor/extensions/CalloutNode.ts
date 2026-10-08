@@ -1,4 +1,4 @@
-import { Node, mergeAttributes } from "@tiptap/core";
+import { Node, mergeAttributes, wrappingInputRule, InputRule } from "@tiptap/core";
 
 export interface CalloutOptions {
   HTMLAttributes: Record<string, unknown>;
@@ -59,6 +59,65 @@ export const CalloutNode = Node.create<CalloutOptions>({
       ],
       ["div", { class: "flex-1 min-w-0" }, 0],
     ];
+  },
+
+  addInputRules() {
+    return [
+      wrappingInputRule({
+        find: /^\s*\[!([a-zA-Z]+)\]\s$/,
+        type: this.type,
+        getAttributes: (match) => ({
+          type: (match[1] || "note").toLowerCase(),
+        }),
+      }),
+      new InputRule({
+        find: /^\s*\[!([a-zA-Z]+)\]\s$/,
+        handler: ({ state, range }) => {
+          const { $from } = state.selection;
+          const parentNode = $from.node(-1);
+          if (parentNode && parentNode.type.name === "blockquote") {
+            state.tr.delete(range.from, range.to);
+            setTimeout(() => {
+              this.editor.chain().lift("blockquote").setCallout().run();
+            }, 0);
+          }
+        },
+      }),
+    ];
+  },
+
+  addStorage() {
+    return {
+      markdown: {
+        serialize(state: any, node: any) {
+          const type = (node.attrs.type || "NOTE").toUpperCase();
+          state.write(`> [!${type}]\n`);
+          state.wrapBlock("> ", null, node, () => state.renderContent(node));
+        },
+        parse: {
+          updateDOM(element: HTMLElement) {
+            element.querySelectorAll("blockquote").forEach((bq) => {
+              const text = bq.textContent || "";
+              const match = text.trim().match(/^\[!([a-zA-Z]+)\]/);
+              if (match) {
+                const type = match[1].toLowerCase();
+                const calloutDiv = document.createElement("div");
+                calloutDiv.setAttribute("data-type", "callout");
+                calloutDiv.setAttribute("data-callout-type", type);
+                const firstP = bq.querySelector("p");
+                if (firstP) {
+                  firstP.textContent = firstP.textContent?.replace(/^\[!([a-zA-Z]+)\]\s*/, "") || "";
+                }
+                while (bq.firstChild) {
+                  calloutDiv.appendChild(bq.firstChild);
+                }
+                bq.replaceWith(calloutDiv);
+              }
+            });
+          },
+        },
+      },
+    };
   },
 
   addCommands() {

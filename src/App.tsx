@@ -37,6 +37,12 @@ export function App() {
   const latestContentRef = useRef<string>("");
   latestContentRef.current = documentContent;
 
+  const isDirtyRef = useRef<boolean>(false);
+  isDirtyRef.current = isDirty;
+  const activeNodeRef = useRef<FileTreeNode | null>(null);
+  activeNodeRef.current = activeNode;
+  const lastSelfSaveTimeRef = useRef<number>(0);
+
   const refreshTree = useCallback(async (root: string) => {
     try {
       const nodes = await scanWorkspace(root);
@@ -86,12 +92,19 @@ export function App() {
     let unlisten: (() => void) | null = null;
     startWatcher(workspaceRoot, async (changedRelativePath) => {
       await refreshTree(workspaceRoot);
-      if (activeNode && changedRelativePath.endsWith(activeNode.name + ".md")) {
-        if (isDirty) {
-          setConflictModalOpen(true);
-        } else {
-          openDocument(workspaceRoot, activeNode);
+      const currentActive = activeNodeRef.current;
+      if (currentActive && changedRelativePath.endsWith(currentActive.name + ".md")) {
+        // Ignore changes triggered by our own recent saves
+        if (Date.now() - lastSelfSaveTimeRef.current < 1500) {
+          return;
         }
+        // If current document has unsaved edits in memory, prompt conflict modal
+        if (isDirtyRef.current) {
+          setConflictModalOpen(true);
+          return;
+        }
+        // If document is clean, reload silently to reflect external change
+        openDocument(workspaceRoot, currentActive);
       }
     }).then((fn) => {
       if (fn) unlisten = fn;
@@ -100,7 +113,7 @@ export function App() {
     return () => {
       if (unlisten) unlisten();
     };
-  }, [workspaceRoot, activeNode, isDirty, refreshTree, openDocument]);
+  }, [workspaceRoot, refreshTree, openDocument]);
 
   const handleSelectWorkspace = async () => {
     const selected = await selectWorkspaceDir();
@@ -127,6 +140,7 @@ export function App() {
     setIsSaving(true);
     try {
       await writeDocument(workspaceRoot, activeNode.file_path, latestContentRef.current);
+      lastSelfSaveTimeRef.current = Date.now();
       setIsDirty(false);
       setIsSaving(false);
       setLastSavedAt(new Date());
@@ -150,6 +164,7 @@ export function App() {
       setIsSaving(true);
       try {
         await writeDocument(workspaceRoot, activeNode.file_path, newContent);
+        lastSelfSaveTimeRef.current = Date.now();
         setIsDirty(false);
         setIsSaving(false);
         setLastSavedAt(new Date());
@@ -164,6 +179,7 @@ export function App() {
     if (!workspaceRoot || !activeNode) return;
     try {
       const newPath = await renamePage(workspaceRoot, activeNode.file_path, newTitle);
+      lastSelfSaveTimeRef.current = Date.now();
       const updatedNode = { ...activeNode, name: newTitle, file_path: newPath };
       setActiveNode(updatedNode);
       await refreshTree(workspaceRoot);
