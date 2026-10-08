@@ -2,14 +2,14 @@
 
 | 范围 | 当前事实 | 阻塞/未验证 | 下一步 |
 |---|---|---|---|
-| Release `v0.1.0` | `Workflow State: REQUIREMENTS_FROZEN；Operational Status: ACTIVE` | `无阻塞，需求已冻结` | `编写完整产品规格说明书 SPEC.md 进入 SPECIFIED` |
-| Slice `未划分` | `NOT_STARTED` | `等待 SPECIFIED ➔ DESIGNED ➔ PLANNED 阶段划分` | `启动 SPEC 编写` |
-| 验证 | `未运行` | `工程尚未开工` | `待 SPEC 建立 REQ/AC 映射` |
+| Release `v0.1.0` | `Workflow State: SPECIFIED；Operational Status: WAITING_HUMAN` | `等待技术架构方案审阅批准 (Architecture Gate)` | `获批后推进至 DESIGNED ➔ PLANNED` |
+| Slice `未划分` | `NOT_STARTED` | `等待实施计划拆解` | `编写 IMPLEMENTATION_PLAN.md` |
+| 验证 | `未运行` | `工程尚未开工` | `待实施阶段执行 Verification` |
 
 ## 定位信息
 
 - Current Requirement Baseline: `docs/vibe/releases/v0.1.0/PROJECT_BRIEF.md`
-- Last Stable Commit/Artifact: `5320c52` (docs(vibe): freeze v0.1.0 requirements via grill-me interview)
+- Last Stable Commit/Artifact: `5320c52`
 - Last Updated: 2026-10-08
 
 ## 任务状态
@@ -19,7 +19,8 @@
 | `REQ-INIT` | `VERIFIED` | 仓库治理结构与文档地图建立 | `DOCUMENT_MAP.md, AGENTS.md, docs/vibe/` | 本地文件审计 |
 | `REQ-GRILL` | `VERIFIED` | 9轮逐题深度对质访谈完成，化解全部产品依赖 | 对话记录与 PROJECT_BRIEF.md | 人类决策已确认 |
 | `REQ-FREEZE` | `VERIFIED` | 需求与验收目标已冻结，Open Questions 清零 | `docs/vibe/releases/v0.1.0/PROJECT_BRIEF.md` | Requirement Gate 全部通过 |
-| `SPEC-DRAFT` | `IN_PROGRESS` | 编写完整 Effective SPEC.md | 待生成 | 展开产品行为、边界与错误处理 |
+| `SPEC-CORE` | `VERIFIED` | 完整 Effective SPEC.md 建立，覆盖 REQ-001~006 / AC-001~022 | `docs/vibe/releases/v0.1.0/SPEC.md` | 规格自洽可测 |
+| `DESIGN-001` | `IMPLEMENTED_UNVERIFIED` | 目标架构设计 PROPOSED_DESIGN.md (Tauri 2.0 + Tiptap) | `docs/vibe/releases/v0.1.0/PROPOSED_DESIGN.md` | 等待人类架构审阅批准 |
 
 ## Slice 进度
 
