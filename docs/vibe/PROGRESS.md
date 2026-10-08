@@ -9,7 +9,7 @@
 ## 定位信息
 
 - Current Requirement Baseline: `docs/vibe/releases/v0.1.0/PROJECT_BRIEF.md`
-- Last Stable Commit/Artifact: `66c85fd` (docs(vibe): complete Effective SPEC and PROPOSED_DESIGN for v0.1.0)
+- Last Stable Commit/Artifact: `e36d036` (feat(spec): add H4 heading support and initialize impeccable design context)
 - Last Updated: 2026-10-08
 
 ## 任务状态
