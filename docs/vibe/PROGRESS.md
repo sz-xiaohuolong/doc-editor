@@ -2,14 +2,14 @@
 
 | 范围 | 当前事实 | 阻塞/未验证 | 下一步 |
 |---|---|---|---|
-| Release `v0.1.0` | `Workflow State: WAITING_REQUIREMENT_FREEZE；Operational Status: WAITING_HUMAN` | `等待用户最终签字确认冻结范围` | `用户批准后推进至 REQUIREMENTS_FROZEN -> SPECIFIED` |
-| Slice `未划分` | `NOT_STARTED` | `等待需求冻结与规格设计` | `完成需求冻结` |
-| 验证 | `未运行` | `工程尚未开工` | `待 SPEC 建立可测 AC` |
+| Release `v0.1.0` | `Workflow State: REQUIREMENTS_FROZEN；Operational Status: ACTIVE` | `无阻塞，需求已冻结` | `编写完整产品规格说明书 SPEC.md 进入 SPECIFIED` |
+| Slice `未划分` | `NOT_STARTED` | `等待 SPECIFIED ➔ DESIGNED ➔ PLANNED 阶段划分` | `启动 SPEC 编写` |
+| 验证 | `未运行` | `工程尚未开工` | `待 SPEC 建立 REQ/AC 映射` |
 
 ## 定位信息
 
 - Current Requirement Baseline: `docs/vibe/releases/v0.1.0/PROJECT_BRIEF.md`
-- Last Stable Commit/Artifact: `92d1780` (docs(vibe): finalize v0.1.0 PROJECT_BRIEF pending freeze approval)
+- Last Stable Commit/Artifact: `1fae37d`
 - Last Updated: 2026-10-08
 
 ## 任务状态
@@ -17,7 +17,9 @@
 | Task/REQ | Delivery Status | 实现或 POC 范围 | 当前证据 | 待验证动作 |
 |---|---|---|---|---|
 | `REQ-INIT` | `VERIFIED` | 仓库治理结构与文档地图建立 | `DOCUMENT_MAP.md, AGENTS.md, docs/vibe/` | 本地文件审计 |
-| `REQ-FREEZE` | `IN_PROGRESS` | 明确第一版产品边界与验收目标 | 见对话中的需求对质问卷 | 等待用户决策 |
+| `REQ-GRILL` | `VERIFIED` | 9轮逐题深度对质访谈完成，化解全部产品依赖 | 对话记录与 PROJECT_BRIEF.md | 人类决策已确认 |
+| `REQ-FREEZE` | `VERIFIED` | 需求与验收目标已冻结，Open Questions 清零 | `docs/vibe/releases/v0.1.0/PROJECT_BRIEF.md` | Requirement Gate 全部通过 |
+| `SPEC-DRAFT` | `IN_PROGRESS` | 编写完整 Effective SPEC.md | 待生成 | 展开产品行为、边界与错误处理 |
 
 ## Slice 进度
 
