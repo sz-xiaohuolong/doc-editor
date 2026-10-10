@@ -1,7 +1,7 @@
 {
   "name": "doc-editor",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,8 @@
     "tauri": "tauri",
     "test": "vitest run",
     "test:e2e": "node scripts/e2e-verify-all.js",
-    "test:wolai": "node scripts/verify-wolai-reproduction.js"
+    "test:wolai": "node scripts/verify-wolai-reproduction.js",
+    "test:v0.2.0": "node scripts/verify-v0.2.0.js"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.2.0",
@@ -25,10 +26,12 @@
     "@tiptap/starter-kit": "^2.11.5",
     "clsx": "^2.1.1",
     "lucide-react": "^0.475.0",
+    "mammoth": "^1.13.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^3.0.1",
-    "tiptap-markdown": "^0.8.10"
+    "tiptap-markdown": "^0.8.10",
+    "turndown": "^7.2.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
@@ -36,6 +39,7 @@
     "@types/node": "^22.13.4",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@types/turndown": "^5.0.6",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.2",

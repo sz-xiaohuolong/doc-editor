@@ -161,3 +161,29 @@ export async function startWatcher(workspacePath: string, onFileChange: (path: s
   }
   return null;
 }
+
+export async function fetchAllDocumentsContent(
+  workspaceRoot: string,
+  nodes: FileTreeNode[]
+): Promise<{ filePath: string; title: string; content: string }[]> {
+  const result: { filePath: string; title: string; content: string }[] = [];
+  function traverse(list: FileTreeNode[]) {
+    for (const node of list) {
+      result.push({ filePath: node.file_path, title: node.name, content: "" });
+      if (node.children && node.children.length > 0) {
+        traverse(node.children);
+      }
+    }
+  }
+  traverse(nodes);
+
+  for (const item of result) {
+    try {
+      item.content = await readDocument(workspaceRoot, item.filePath);
+    } catch {
+      item.content = "";
+    }
+  }
+  return result;
+}
+

@@ -1,9 +1,46 @@
 import puppeteer from 'puppeteer-core';
 import fs from 'fs';
 import path from 'path';
+import { spawn } from 'child_process';
+import http from 'http';
+
+function checkServerReady(port = 1420) {
+  return new Promise((resolve) => {
+    const req = http.get(`http://localhost:${port}`, (res) => {
+      resolve(true);
+    });
+    req.on('error', () => {
+      resolve(false);
+    });
+    req.setTimeout(1000, () => {
+      req.abort();
+      resolve(false);
+    });
+  });
+}
 
 async function run() {
   console.log('--- Starting Wolai Reproduction & BlockHandle Verification ---');
+
+  let viteProcess = null;
+  const isReady = await checkServerReady(1420);
+  if (!isReady) {
+    console.log('Vite server not detected on :1420. Starting Vite...');
+    viteProcess = spawn('npx', ['vite', '--port', '1420', '--clearScreen', 'false'], {
+      stdio: 'pipe',
+    });
+
+    let attempts = 0;
+    while (attempts < 20) {
+      await new Promise((r) => setTimeout(r, 500));
+      if (await checkServerReady(1420)) {
+        console.log('Vite server ready!');
+        break;
+      }
+      attempts++;
+    }
+  }
+
   const browser = await puppeteer.launch({
     executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     headless: true,
@@ -11,9 +48,10 @@ async function run() {
   });
 
   const page = await browser.newPage();
-  await page.goto('http://localhost:1420', { waitUntil: 'networkidle0' });
-  await page.waitForSelector('.ProseMirror');
-  await new Promise(r => setTimeout(r, 600));
+  try {
+    await page.goto('http://localhost:1420', { waitUntil: 'networkidle0' });
+    await page.waitForSelector('.ProseMirror');
+    await new Promise(r => setTimeout(r, 600));
 
   // 1. Verify Typography Styles
   console.log('\n[1] Verifying Typography Styles...');
@@ -187,8 +225,13 @@ async function run() {
   await page.screenshot({ path: finalScreenshotPath });
   console.log('  ✓ Saved final verified screenshot to:', finalScreenshotPath);
 
-  await browser.close();
-  console.log('\n--- All Wolai Reproduction Verifications PASSED! ---');
+    console.log('\n--- All Wolai Reproduction Verifications PASSED! ---');
+  } finally {
+    await browser.close();
+    if (viteProcess) {
+      viteProcess.kill();
+    }
+  }
 }
 
 run().catch(err => {

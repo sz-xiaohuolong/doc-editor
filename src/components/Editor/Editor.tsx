@@ -10,18 +10,22 @@ import { Markdown } from "tiptap-markdown";
 import { NodeSelection, TextSelection } from "@tiptap/pm/state";
 import { wrappingInputRule, InputRule } from "@tiptap/core";
 import { CalloutNode } from "./extensions/CalloutNode";
+import { WikiLinkNode } from "./extensions/WikiLinkNode";
 import {
   SlashMenu,
   SLASH_MENU_ITEMS,
   SlashMenuItem,
   filterSlashMenuItems,
 } from "./SlashMenu";
+import { WikiLinkMenu, WikiLinkCandidate } from "./WikiLinkMenu";
 import { BlockHandle } from "./BlockHandle";
 import { saveImageAsset } from "../../services/tauriApi";
 
 interface EditorProps {
   initialContent: string;
   workspaceRoot: string;
+  availablePages?: WikiLinkCandidate[];
+  onNavigateToPage?: (title: string) => void;
   onChange: (content: string) => void;
   onSaveShortcut?: () => void;
 }
@@ -93,44 +97,73 @@ const CustomTaskItem = TaskItem.extend({
 export const Editor: React.FC<EditorProps> = ({
   initialContent,
   workspaceRoot,
+  availablePages = [],
+  onNavigateToPage,
   onChange,
   onSaveShortcut,
 }) => {
+  // Slash menu state
   const [slashMenuOpen, setSlashMenuOpen] = useState(false);
   const [slashQuery, setSlashQuery] = useState("");
   const [slashPosition, setSlashPosition] = useState({ top: 0, left: 0 });
   const [slashRange, setSlashRange] = useState<{ from: number; to: number } | null>(null);
   const [slashSelectedIndex, setSlashSelectedIndex] = useState(0);
 
+  // WikiLink menu state
+  const [wikiLinkMenuOpen, setWikiLinkMenuOpen] = useState(false);
+  const [wikiLinkQuery, setWikiLinkQuery] = useState("");
+  const [wikiLinkPosition, setWikiLinkPosition] = useState({ top: 0, left: 0 });
+  const [wikiLinkRange, setWikiLinkRange] = useState<{ from: number; to: number } | null>(null);
+  const [wikiLinkSelectedIndex, setWikiLinkSelectedIndex] = useState(0);
+
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
   // Filter items based on current slash query
-  const filteredItems = useMemo(
+  const filteredSlashItems = useMemo(
     () => filterSlashMenuItems(SLASH_MENU_ITEMS, slashQuery),
     [slashQuery]
   );
 
+  // Filter available pages based on current wikiLink query
+  const filteredWikiLinkItems = useMemo(() => {
+    const q = wikiLinkQuery.trim().toLowerCase();
+    if (!q) return availablePages;
+    return availablePages.filter((p) => p.name.toLowerCase().includes(q));
+  }, [availablePages, wikiLinkQuery]);
+
   // Keep refs for keydown handler to prevent stale closures
   const slashMenuOpenRef = useRef(slashMenuOpen);
   slashMenuOpenRef.current = slashMenuOpen;
-
   const slashRangeRef = useRef(slashRange);
   slashRangeRef.current = slashRange;
-
-  const filteredItemsRef = useRef(filteredItems);
-  filteredItemsRef.current = filteredItems;
-
+  const filteredSlashItemsRef = useRef(filteredSlashItems);
+  filteredSlashItemsRef.current = filteredSlashItems;
   const slashSelectedIndexRef = useRef(slashSelectedIndex);
   slashSelectedIndexRef.current = slashSelectedIndex;
 
-  // Reset selected index when filtered items change
+  const wikiLinkMenuOpenRef = useRef(wikiLinkMenuOpen);
+  wikiLinkMenuOpenRef.current = wikiLinkMenuOpen;
+  const wikiLinkRangeRef = useRef(wikiLinkRange);
+  wikiLinkRangeRef.current = wikiLinkRange;
+  const filteredWikiLinkItemsRef = useRef(filteredWikiLinkItems);
+  filteredWikiLinkItemsRef.current = filteredWikiLinkItems;
+  const wikiLinkSelectedIndexRef = useRef(wikiLinkSelectedIndex);
+  wikiLinkSelectedIndexRef.current = wikiLinkSelectedIndex;
+
+  // Reset selected indices when filtered items change
   useEffect(() => {
     setSlashSelectedIndex(0);
-  }, [filteredItems]);
+  }, [filteredSlashItems]);
+
+  useEffect(() => {
+    setWikiLinkSelectedIndex(0);
+  }, [filteredWikiLinkItems]);
+
+  const editorRef = useRef<any>(null);
 
   const handleSelectSlashItem = useCallback(
-    (item: SlashMenuItem, currentEditor?: typeof editor) => {
-      const ed = currentEditor || editor;
+    (item: SlashMenuItem) => {
+      const ed = editorRef.current;
       if (!ed) return;
 
       const range = slashRangeRef.current;
@@ -141,12 +174,30 @@ export const Editor: React.FC<EditorProps> = ({
       setSlashMenuOpen(false);
       setSlashRange(null);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
   const handleSelectSlashItemRef = useRef(handleSelectSlashItem);
   handleSelectSlashItemRef.current = handleSelectSlashItem;
+
+  const handleSelectWikiLinkItem = useCallback(
+    (item: WikiLinkCandidate) => {
+      const ed = editorRef.current;
+      if (!ed) return;
+
+      const range = wikiLinkRangeRef.current;
+      if (range) {
+        ed.chain().focus().deleteRange(range).run();
+      }
+      ed.chain().focus().insertWikiLink(item.name).run();
+      setWikiLinkMenuOpen(false);
+      setWikiLinkRange(null);
+    },
+    []
+  );
+
+  const handleSelectWikiLinkItemRef = useRef(handleSelectWikiLinkItem);
+  handleSelectWikiLinkItemRef.current = handleSelectWikiLinkItem;
 
   const checkSlashMenu = useCallback((ed: typeof editor) => {
     if (!ed) return;
@@ -190,6 +241,48 @@ export const Editor: React.FC<EditorProps> = ({
     setSlashRange(null);
   }, []);
 
+  const checkWikiLinkMenu = useCallback((ed: typeof editor) => {
+    if (!ed) return;
+    const { state } = ed;
+    const { selection } = state;
+    const { from, empty } = selection;
+
+    if (!empty) {
+      setWikiLinkMenuOpen(false);
+      return;
+    }
+
+    const $from = selection.$from;
+    const parent = $from.parent;
+    if (!parent.isTextblock) {
+      setWikiLinkMenuOpen(false);
+      return;
+    }
+
+    const startOfBlock = $from.start();
+    const textBefore = state.doc.textBetween(startOfBlock, from, "\n", "\0");
+    const bracketIndex = textBefore.lastIndexOf("[[");
+
+    if (bracketIndex !== -1) {
+      const query = textBefore.slice(bracketIndex + 2);
+      if (!query.includes("]]") && !query.includes("\n")) {
+        const triggerPos = startOfBlock + bracketIndex;
+        const coords = ed.view.coordsAtPos(from);
+        setWikiLinkPosition({
+          top: coords.bottom + 8,
+          left: Math.min(coords.left, window.innerWidth - 300),
+        });
+        setWikiLinkQuery(query);
+        setWikiLinkRange({ from: triggerPos, to: from });
+        setWikiLinkMenuOpen(true);
+        return;
+      }
+    }
+
+    setWikiLinkMenuOpen(false);
+    setWikiLinkRange(null);
+  }, []);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -207,9 +300,10 @@ export const Editor: React.FC<EditorProps> = ({
         allowBase64: true,
       }),
       Placeholder.configure({
-        placeholder: "输入 '/' 唤起命令，或直接输入文字...",
+        placeholder: "输入 '/' 唤起命令，输入 '[[' 插入双向链接...",
       }),
       CalloutNode,
+      WikiLinkNode,
       Markdown.configure({
         html: false,
         tightLists: true,
@@ -225,12 +319,64 @@ export const Editor: React.FC<EditorProps> = ({
         class:
           "prose max-w-none focus:outline-none min-h-[500px] text-[15px] leading-relaxed text-slate-800",
       },
+      handleClick: (view, pos, event) => {
+        // Handle click on WikiLink pills
+        const target = (event.target as HTMLElement).closest(
+          '[data-type="wiki-link"]'
+        );
+        if (target) {
+          const title = target.getAttribute("data-target-title");
+          if (title && onNavigateToPage) {
+            onNavigateToPage(title);
+            return true;
+          }
+        }
+        return false;
+      },
       handleKeyDown: (view, event) => {
-        // Intercept keyboard controls when Slash Menu is open
-        if (slashMenuOpenRef.current && filteredItemsRef.current.length > 0) {
+        // Intercept keyboard controls when WikiLink Menu is open
+        if (
+          wikiLinkMenuOpenRef.current &&
+          filteredWikiLinkItemsRef.current.length > 0
+        ) {
           if (event.key === "ArrowDown") {
             event.preventDefault();
-            const total = filteredItemsRef.current.length;
+            const total = filteredWikiLinkItemsRef.current.length;
+            const next = (wikiLinkSelectedIndexRef.current + 1) % total;
+            wikiLinkSelectedIndexRef.current = next;
+            setWikiLinkSelectedIndex(next);
+            return true;
+          }
+          if (event.key === "ArrowUp") {
+            event.preventDefault();
+            const total = filteredWikiLinkItemsRef.current.length;
+            const next = (wikiLinkSelectedIndexRef.current - 1 + total) % total;
+            wikiLinkSelectedIndexRef.current = next;
+            setWikiLinkSelectedIndex(next);
+            return true;
+          }
+          if (event.key === "Enter") {
+            event.preventDefault();
+            const selectedItem =
+              filteredWikiLinkItemsRef.current[wikiLinkSelectedIndexRef.current];
+            if (selectedItem) {
+              handleSelectWikiLinkItemRef.current(selectedItem);
+            }
+            return true;
+          }
+          if (event.key === "Escape") {
+            event.preventDefault();
+            setWikiLinkMenuOpen(false);
+            setWikiLinkRange(null);
+            return true;
+          }
+        }
+
+        // Intercept keyboard controls when Slash Menu is open
+        if (slashMenuOpenRef.current && filteredSlashItemsRef.current.length > 0) {
+          if (event.key === "ArrowDown") {
+            event.preventDefault();
+            const total = filteredSlashItemsRef.current.length;
             const next = (slashSelectedIndexRef.current + 1) % total;
             slashSelectedIndexRef.current = next;
             setSlashSelectedIndex(next);
@@ -238,7 +384,7 @@ export const Editor: React.FC<EditorProps> = ({
           }
           if (event.key === "ArrowUp") {
             event.preventDefault();
-            const total = filteredItemsRef.current.length;
+            const total = filteredSlashItemsRef.current.length;
             const next = (slashSelectedIndexRef.current - 1 + total) % total;
             slashSelectedIndexRef.current = next;
             setSlashSelectedIndex(next);
@@ -247,9 +393,9 @@ export const Editor: React.FC<EditorProps> = ({
           if (event.key === "Enter") {
             event.preventDefault();
             const selectedItem =
-              filteredItemsRef.current[slashSelectedIndexRef.current];
+              filteredSlashItemsRef.current[slashSelectedIndexRef.current];
             if (selectedItem) {
-              handleSelectSlashItem(selectedItem, editor);
+              handleSelectSlashItemRef.current(selectedItem);
             }
             return true;
           }
@@ -340,8 +486,13 @@ export const Editor: React.FC<EditorProps> = ({
         return false;
       },
     },
+    onCreate: ({ editor: ed }) => {
+      editorRef.current = ed;
+    },
     onUpdate: ({ editor: ed }) => {
+      editorRef.current = ed;
       checkSlashMenu(ed);
+      checkWikiLinkMenu(ed);
       const md = (
         ed.storage as unknown as {
           markdown?: { getMarkdown: () => string };
@@ -352,9 +503,13 @@ export const Editor: React.FC<EditorProps> = ({
       }
     },
     onSelectionUpdate: ({ editor: ed }) => {
+      editorRef.current = ed;
       checkSlashMenu(ed);
+      checkWikiLinkMenu(ed);
     },
   });
+
+  editorRef.current = editor;
 
   // Expose editor on window in development for end-to-end debugging
   useEffect(() => {
@@ -385,15 +540,27 @@ export const Editor: React.FC<EditorProps> = ({
       <BlockHandle editor={editor} containerRef={editorContainerRef} />
       <EditorContent editor={editor} />
       {editor && (
-        <SlashMenu
-          isOpen={slashMenuOpen}
-          query={slashQuery}
-          position={slashPosition}
-          items={filteredItems}
-          selectedIndex={slashSelectedIndex}
-          setSelectedIndex={setSlashSelectedIndex}
-          onSelect={(item) => handleSelectSlashItem(item, editor)}
-        />
+        <>
+          <SlashMenu
+            isOpen={slashMenuOpen}
+            query={slashQuery}
+            position={slashPosition}
+            items={filteredSlashItems}
+            selectedIndex={slashSelectedIndex}
+            setSelectedIndex={setSlashSelectedIndex}
+            onSelect={(item) => handleSelectSlashItem(item)}
+          />
+          <WikiLinkMenu
+            isOpen={wikiLinkMenuOpen}
+            query={wikiLinkQuery}
+            position={wikiLinkPosition}
+            items={filteredWikiLinkItems}
+            selectedIndex={wikiLinkSelectedIndex}
+            setSelectedIndex={setWikiLinkSelectedIndex}
+            onSelect={(item) => handleSelectWikiLinkItem(item)}
+            onClose={() => setWikiLinkMenuOpen(false)}
+          />
+        </>
       )}
     </div>
   );

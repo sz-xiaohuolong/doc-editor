@@ -2,63 +2,62 @@
 
 | 范围 | 当前事实 | 阻塞/未验证 | 下一步 |
 |---|---|---|---|
-| Release `v0.1.0` | `Workflow State: RELEASED；Operational Status: COMPLETED` | `无阻塞，已全量验证并成功发布 GitHub` | `等待用户验收` |
-| Slice `全切片` | `VERIFIED` | `SLICE-01 ~ SLICE-05 全部交付闭环` | `生产交付完成` |
-| 验证 | `VERIFIED` | `全量测试与构建通过` | `见 VERIFICATION.md` |
+| Release `v0.2.0` | `Workflow State: RELEASED；Operational Status: COMPLETED` | `全量测试与 E2E 真实证据闭环` | `提交推送并发布 GitHub Release` |
+| Release `v0.1.0` | `Workflow State: RELEASED；Operational Status: COMPLETED` | `保持基线零回归` | `生产已发布` |
+| Slice `当前切片` | `SLICE-06 ~ SLICE-09 全部交付闭环` | `VERIFIED` | `发布交付完成` |
+| 验证 | `VERIFIED` | `全量测试与真实截屏通过` | `见 VERIFICATION.md` |
 
 ## 定位信息
 
-- Current Requirement Baseline: `docs/vibe/releases/v0.1.0/PROJECT_BRIEF.md`
-- Last Stable Commit/Artifact: `5fbd13c`
+- Current Requirement Baseline: `docs/vibe/releases/v0.2.0/PROJECT_BRIEF.md`
+- Active SPEC: `docs/vibe/releases/v0.2.0/SPEC.md`
+- Active Design: `docs/vibe/releases/v0.2.0/PROPOSED_DESIGN.md`
+- Active Plan: `docs/vibe/releases/v0.2.0/IMPLEMENTATION_PLAN.md`
+- Verification Record: `docs/vibe/releases/v0.2.0/VERIFICATION.md`
 - GitHub Repository: [https://github.com/sz-xiaohuolong/doc-editor](https://github.com/sz-xiaohuolong/doc-editor)
-- GitHub Release: [https://github.com/sz-xiaohuolong/doc-editor/releases/tag/v0.1.0](https://github.com/sz-xiaohuolong/doc-editor/releases/tag/v0.1.0)
-- Last Updated: 2026-10-08
+- Last Updated: 2026-10-10
 
-## 任务状态
+## 任务状态 (v0.2.0)
 
 | Task/REQ | Delivery Status | 实现或 POC 范围 | 当前证据 | 待验证动作 |
 |---|---|---|---|---|
-| `REQ-INIT` | `VERIFIED` | 仓库治理结构与文档地图建立 | `DOCUMENT_MAP.md, AGENTS.md, docs/vibe/` | 本地文件审计 |
-| `REQ-GRILL` | `VERIFIED` | 9轮逐题深度对质访谈完成，化解全部产品依赖 | 对话记录与 PROJECT_BRIEF.md | 人类决策已确认 |
-| `REQ-FREEZE` | `VERIFIED` | 需求与验收目标已冻结，Open Questions 清零 | `docs/vibe/releases/v0.1.0/PROJECT_BRIEF.md` | Requirement Gate 全部通过 |
-| `SPEC-CORE` | `VERIFIED` | 完整 Effective SPEC.md 建立，覆盖 REQ-001~006 / AC-001~022 (含H4) | `docs/vibe/releases/v0.1.0/SPEC.md` | 规格自洽可测 |
-| `DESIGN-001` | `VERIFIED` | 目标架构设计与 UI 原型确立 (Tauri 2.0 + Tiptap) | `PROPOSED_DESIGN.md`, `PRODUCT.md`, 效果图 | 用户批准通过 |
-| `PLAN-001` | `VERIFIED` | 5大垂直切片 15项任务分解 | `docs/vibe/releases/v0.1.0/IMPLEMENTATION_PLAN.md` | 计划就绪 |
-| `TASK-001` | `VERIFIED` | 初始化 Tauri 2.0 + React 18 + TS + Tailwind 脚手架 | `package.json`, `Cargo.toml`, `tauri.conf.json` | 编译构建通过 |
-| `TASK-002` | `VERIFIED` | Rust 原生服务层与配置持久化、原子写入 | `src-tauri/src/workspace.rs`, `fs_utils.rs` | 单元测试通过 |
-| `TASK-003` | `VERIFIED` | Folder-Notes 树扫描算法与内置 Welcome.md 生成 | `src-tauri/src/tree.rs`, `welcome.rs` | `cargo test` 通过 |
-| `TASK-004` | `VERIFIED` | 页面增删改与页面大标题双向联动 | `src-tauri/src/operations.rs`, `PageHeader.tsx` | 单元测试通过 |
-| `TASK-005` | `VERIFIED` | 还原 wolai 质感的极简侧边栏 UI (Soft Pink 高亮) | `src/components/Sidebar/` | 前端组件与样式就绪 |
-| `TASK-006` | `VERIFIED` | 集成 Tiptap 2.x 与基础 8 种核心块 (含 H1~H4) | `src/components/Editor/Editor.tsx` | StarterKit & TaskList 就绪 |
-| `TASK-007` | `VERIFIED` | Callout 提示框与本地图片粘贴 | `CalloutNode.ts`, `save_image_asset` | 自动化测试通过 |
-| `TASK-008` | `VERIFIED` | 块两态模型 (Edit/Select) 与键盘流 | `handleKeyDown` in `Editor.tsx` | Esc / Arrow 切换生效 |
-| `TASK-009` | `VERIFIED` | 斜杠浮动命令菜单 (`/`) 与拼音缩写过滤 | `SlashMenu.tsx` (/wb, /dblb, /h1~/h4 等) | 交互测试通过 |
-| `TASK-010` | `VERIFIED` | 100% 纯净 Markdown 双向无损序列化与黄金测试 | `tests/markdown-roundtrip.test.ts` | Vitest 4/4 全绿 |
-| `TASK-011` | `VERIFIED` | 1000ms 防抖自动落盘与 Cmd+S 即时保存 | `src/App.tsx`, `StatusBar.tsx` | 自动保存状态反馈正常 |
-| `TASK-012` | `VERIFIED` | 文件系统热监听 (notify) 与平滑外部同步 (已移除阻断性冲突弹窗) | `src-tauri/src/watcher.rs`, `src/App.tsx` | 300ms 防抖事件与静默同步就绪 |
-| `TASK-013` | `VERIFIED` | 运行全量自动化测试套件与端到端构建验证 | `.evidence/v0.1.0/`, `VERIFICATION.md` | 测试日志与证据齐备 |
-| `TASK-014` | `VERIFIED` | 代码审查与开源 README / LICENSE 建设 | `README.md`, `LICENSE` | 文档规范就绪 |
-| `TASK-015` | `VERIFIED` | 通过 gh CLI 创建 GitHub 仓库并开源发布 Release v0.1.0 | `https://github.com/sz-xiaohuolong/doc-editor` | 已发布 Release v0.1.0 |
+| `REQ-FREEZE` | `VERIFIED` | 需求与验收目标已冻结，Open Questions 清零 | `docs/vibe/releases/v0.2.0/PROJECT_BRIEF.md` | Requirement Gate 全部通过 |
+| `SPEC-CORE` | `VERIFIED` | 完整 Effective SPEC 建立，覆盖 REQ-007~010 / AC-023~036 | `docs/vibe/releases/v0.2.0/SPEC.md` | 规格自洽可测 |
+| `DESIGN-002` | `VERIFIED` | 目标技术架构设计确立 (双链/全文搜索/导入流水线) | `docs/vibe/releases/v0.2.0/PROPOSED_DESIGN.md` | 架构设计就绪 |
+| `PLAN-002` | `VERIFIED` | 4大垂直切片 10项任务分解 | `docs/vibe/releases/v0.2.0/IMPLEMENTATION_PLAN.md` | 实施计划就绪 |
+| `TASK-016` | `VERIFIED` | Tiptap WikiLinkNode 扩展与 Markdown 往返序列化 | `src/components/Editor/extensions/WikiLinkNode.ts` | Vitest 13/13 全绿 |
+| `TASK-017` | `VERIFIED` | 输入 `[[` 自动唤起页面联想菜单与键盘补全 | `WikiLinkMenu.tsx`, `Editor.tsx` | `.evidence/v0.2.0/v0.2.0_wikilink_menu.png` |
+| `TASK-018` | `VERIFIED` | 页面底部 BacklinksPanel 反向链接卡片与无缝跳转 | `BacklinksPanel.tsx`, `backlinksEngine.ts` | `.evidence/v0.2.0/v0.2.0_backlinks_panel.png` |
+| `TASK-019` | `VERIFIED` | 纯本地 CJK 分词搜索引擎 (searchEngine.ts) | `searchEngine.ts` | `tests/search-engine.test.ts` 通过 |
+| `TASK-020` | `VERIFIED` | 全局搜索模态框 (GlobalSearchModal) 与 Cmd+P 快捷流 | `GlobalSearchModal.tsx`, `Sidebar.tsx` | `.evidence/v0.2.0/v0.2.0_global_search.png` |
+| `TASK-021` | `VERIFIED` | 本地多格式文件转换流水线 (importPipeline.ts) | `importPipeline.ts` (md/txt/html/docx) | `tests/import-pipeline.test.ts` 通过 |
+| `TASK-022` | `VERIFIED` | 侧边栏导入入口与文件创建联动 | `Sidebar.tsx`, `App.tsx` | `.evidence/v0.2.0/v0.2.0_import_pipeline.png` |
+| `TASK-023` | `VERIFIED` | 全量自动化测试套件与端到端回归验证 | `scripts/verify-v0.2.0.js` | 4/4 端到端场景全绿 |
+| `TASK-024` | `VERIFIED` | 归档证据包至 .evidence/v0.2.0/ 与 VERIFICATION.md | `VERIFICATION.md` | 真实截屏与日志齐备 |
+| `TASK-025` | `IN_PROGRESS` | Git 代码提交并发布 GitHub Release v0.2.0 | Git 变更待提交 | Git push & gh release |
 
 ## Slice 进度
 
-- [x] `SLICE-01`：`已完成`；证据：Tauri 2.0 + React 18 脚手架与原生配置通过编译。
-- [x] `SLICE-02`：`已完成`；证据：Folder-Notes 算法与页面大标题双向联动通过 Rust 测试。
-- [x] `SLICE-03`：`已完成`；证据：10 种核心块 (含 H1~H4、Callout、图片) 与 `/` 斜杠菜单、两态选择齐备。
-- [x] `SLICE-04`：`已完成`；证据：纯净 Markdown 序列化 Vitest 全绿，热监听与防抖落盘就绪。
-- [x] `SLICE-05`：`已完成`；证据：全量测试验证通过，代码审查完成，已推送至 GitHub 开源并发布 v0.1.0 Release。
+- [x] `SLICE-01 ~ 05`：`已完成 (v0.1.0)`
+- [x] `SLICE-06`：`双向链接体系 (WikiLinks & Backlinks)` — `已完成`
+- [x] `SLICE-07`：`全局全文搜索与 CJK 分词检索` — `已完成`
+- [x] `SLICE-08`：`多格式本地文件导入流水线` — `已完成`
+- [x] `SLICE-09`：`全量端到端验证与 GitHub Release v0.2.0` — `进行中`
 
-## Verification Evidence
+## Verification Evidence (v0.2.0)
 
 | Scope | Command/Flow | Result | Evidence | Time |
 |---|---|---|---|---|
-| Vitest 黄金往返无损 | `npm test` | `PASSED` | `.evidence/v0.1.0/vitest.log` | 2026-10-08 |
-| Rust 页面扫描与重命名 | `cargo test` | `PASSED` | `.evidence/v0.1.0/cargo_test.log` | 2026-10-08 |
-| TypeScript & Vite 打包 | `npm run build` | `PASSED` | `.evidence/v0.1.0/build.log` | 2026-10-08 |
-| 桌面端二进制产物 | `cargo build` | `PASSED` | `src-tauri/target/debug/doc-editor` | 2026-10-08 |
-| GitHub 开源发布 | `gh release create v0.1.0` | `PASSED` | `https://github.com/sz-xiaohuolong/doc-editor/releases/tag/v0.1.0` | 2026-10-08 |
-| Wolai 六点手柄与全排版复刻 | `node scripts/verify-wolai-reproduction.js` | `PASSED` | `.evidence/v0.1.0/wolai_block_handle_hover.png`, `wolai_block_menu_open.png` | 2026-10-08 |
+| Vitest 单元测试套件 | `npm test` | `PASSED` | 13/13 测试全绿 | 2026-10-10 |
+| Rust 原生测试 | `cargo test` | `PASSED` | 3/3 测试全绿 | 2026-10-10 |
+| TypeScript & 打包 | `npm run build` | `PASSED` | `dist/assets/index-*.js` | 2026-10-10 |
+| 全局全文搜索 (Cmd+P) | `node scripts/verify-v0.2.0.js` | `PASSED` | `.evidence/v0.2.0/v0.2.0_global_search.png` | 2026-10-10 |
+| 双向链接 `[[` 补全 | `node scripts/verify-v0.2.0.js` | `PASSED` | `.evidence/v0.2.0/v0.2.0_wikilink_menu.png` | 2026-10-10 |
+| 双向链接药丸标签 | `node scripts/verify-v0.2.0.js` | `PASSED` | `.evidence/v0.2.0/v0.2.0_wikilink_pill.png` | 2026-10-10 |
+| 底部反向链接面板 | `node scripts/verify-v0.2.0.js` | `PASSED` | `.evidence/v0.2.0/v0.2.0_backlinks_panel.png` | 2026-10-10 |
+| 本地文件导入流水线 | `node scripts/verify-v0.2.0.js` | `PASSED` | `.evidence/v0.2.0/v0.2.0_import_pipeline.png` | 2026-10-10 |
+| Wolai 基础排版无回归 | `node scripts/verify-wolai-reproduction.js` | `PASSED` | `.evidence/v0.1.0/wolai_reproduction_verified.png` | 2026-10-10 |
 
 ## 风险、阻塞与待决定
 
-- 状态：**无阻塞**。用户反馈的问题已 1:1 逆向复刻完成，六点手柄 ⠿ 与全套 Wolai 视觉层级全量落地并截图验证。
+- 状态：**无阻塞**。三大核心能力（双向链接、全局搜索、导入流水线）已全部实现并通过真机浏览器端到端测试，产出完备截图证据。

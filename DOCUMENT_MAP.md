@@ -15,5 +15,10 @@
 | 实施计划 (v0.1.0) | `docs/vibe/releases/v0.1.0/IMPLEMENTATION_PLAN.md` | `已执行` | 5大垂直切片 15项任务 |
 | 验证记录 (v0.1.0) | `docs/vibe/releases/v0.1.0/VERIFICATION.md` | `已验证` | 全体 AC-001~022 测试通过 |
 | 决策记录 | `docs/vibe/decisions/` | `按需` | 重大架构/数据决策记录 |
+| 产品范围与验收 (v0.2.0) | `docs/vibe/releases/v0.2.0/PROJECT_BRIEF.md` | `已冻结` | 双链、搜索与导入需求已冻结 |
+| 规格说明书 (v0.2.0) | `docs/vibe/releases/v0.2.0/SPEC.md` | `已建立` | 覆盖 REQ-007~010 / AC-023~036 |
+| 目标技术设计 (v0.2.0) | `docs/vibe/releases/v0.2.0/PROPOSED_DESIGN.md` | `已批准` | DESIGN-002 (WikiLink + Search + Import) |
+| 实施计划 (v0.2.0) | `docs/vibe/releases/v0.2.0/IMPLEMENTATION_PLAN.md` | `执行中` | 4大垂直切片 10项任务 |
+| 验证记录 (v0.2.0) | `docs/vibe/releases/v0.2.0/VERIFICATION.md` | `待验证` | 待全量测试通过后归档 |
 
 本文件只作导航，不复制需求、设计或验证结论。
