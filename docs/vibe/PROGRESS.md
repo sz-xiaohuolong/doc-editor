@@ -2,7 +2,7 @@
 
 | 范围 | 当前事实 | 阻塞/未验证 | 下一步 |
 |---|---|---|---|
-| Release `v0.2.0` | `Workflow State: RELEASED；Operational Status: COMPLETED` | `全量测试与 E2E 真实证据闭环` | `提交推送并发布 GitHub Release` |
+| Release `v0.2.0` | `Workflow State: RELEASED；Operational Status: COMPLETED` | `VERIFIED` | `生产已发布` |
 | Release `v0.1.0` | `Workflow State: RELEASED；Operational Status: COMPLETED` | `保持基线零回归` | `生产已发布` |
 | Slice `当前切片` | `SLICE-06 ~ SLICE-09 全部交付闭环` | `VERIFIED` | `发布交付完成` |
 | 验证 | `VERIFIED` | `全量测试与真实截屏通过` | `见 VERIFICATION.md` |
@@ -15,6 +15,7 @@
 - Active Plan: `docs/vibe/releases/v0.2.0/IMPLEMENTATION_PLAN.md`
 - Verification Record: `docs/vibe/releases/v0.2.0/VERIFICATION.md`
 - GitHub Repository: [https://github.com/sz-xiaohuolong/doc-editor](https://github.com/sz-xiaohuolong/doc-editor)
+- GitHub Release: [https://github.com/sz-xiaohuolong/doc-editor/releases/tag/v0.2.0](https://github.com/sz-xiaohuolong/doc-editor/releases/tag/v0.2.0)
 - Last Updated: 2026-10-10
 
 ## 任务状态 (v0.2.0)
@@ -34,7 +35,7 @@
 | `TASK-022` | `VERIFIED` | 侧边栏导入入口与文件创建联动 | `Sidebar.tsx`, `App.tsx` | `.evidence/v0.2.0/v0.2.0_import_pipeline.png` |
 | `TASK-023` | `VERIFIED` | 全量自动化测试套件与端到端回归验证 | `scripts/verify-v0.2.0.js` | 4/4 端到端场景全绿 |
 | `TASK-024` | `VERIFIED` | 归档证据包至 .evidence/v0.2.0/ 与 VERIFICATION.md | `VERIFICATION.md` | 真实截屏与日志齐备 |
-| `TASK-025` | `IN_PROGRESS` | Git 代码提交并发布 GitHub Release v0.2.0 | Git 变更待提交 | Git push & gh release |
+| `TASK-025` | `VERIFIED` | Git 代码提交并发布 GitHub Release v0.2.0 | `https://github.com/sz-xiaohuolong/doc-editor/releases/tag/v0.2.0` | 发布完成 |
 
 ## Slice 进度
 
@@ -42,7 +43,7 @@
 - [x] `SLICE-06`：`双向链接体系 (WikiLinks & Backlinks)` — `已完成`
 - [x] `SLICE-07`：`全局全文搜索与 CJK 分词检索` — `已完成`
 - [x] `SLICE-08`：`多格式本地文件导入流水线` — `已完成`
-- [x] `SLICE-09`：`全量端到端验证与 GitHub Release v0.2.0` — `进行中`
+- [x] `SLICE-09`：`全量端到端验证与 GitHub Release v0.2.0` — `已完成`
 
 ## Verification Evidence (v0.2.0)
 
@@ -60,4 +61,4 @@
 
 ## 风险、阻塞与待决定
 
-- 状态：**无阻塞**。三大核心能力（双向链接、全局搜索、导入流水线）已全部实现并通过真机浏览器端到端测试，产出完备截图证据。
+- 状态：**已完成**。三大核心能力（双向链接、全局搜索、导入流水线）已全部实现并通过真机浏览器端到端测试，产出完备截图证据，已正式发布 GitHub Release v0.2.0。
